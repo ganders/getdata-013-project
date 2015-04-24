@@ -6,5 +6,5 @@ The run_analysis.R script downloads and uncompresses the data then proceeds to r
 
 For more information on the process used to tidy the data please review code comments in run_analysis.R
 
-For more information on the data please see CodeBook.md
+### For more information on requirements, usage, process, and output, please see CodeBook.md
 

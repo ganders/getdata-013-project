@@ -11,4 +11,4 @@ data
 # produced vignettes
 vignettes/*.html
 vignettes/*.pdf
-README.md
+*.html

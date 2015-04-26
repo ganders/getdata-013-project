@@ -19,13 +19,29 @@ if (!file.exists("data/UCI HAR Dataset")) {
 feature_names <- read.table("data/UCI HAR Dataset/features.txt")
 feature_names <- as.vector(feature_names$V2)
 
-# remove annoying () and in column names
+# turn the variable names into something tidy and more readable
+feature_names <- gsub("^t", "time_", feature_names)
+feature_names <- gsub("^f", "frequency_", feature_names)
+feature_names <- gsub("Body", "body_", feature_names)
+feature_names <- gsub("body_[Bb]ody", "body_", feature_names)
+feature_names <- gsub("Acc", "acceleration_", feature_names)
+feature_names <- gsub("Gyro", "gyroscope_", feature_names)
+feature_names <- gsub("Gravity", "gravity_", feature_names)
+feature_names <- gsub("Jerk", "jerk_", feature_names)
+feature_names <- gsub("Mag", "mag_", feature_names)
+feature_names <- gsub("Coef", "_coef", feature_names)
+feature_names <- gsub("Energy", "_energy", feature_names)
+feature_names <- gsub("Mean", "mean", feature_names)
+feature_names <- gsub("gravitymean", "gravity_mean", feature_names)
+feature_names <- gsub("meanFreq", "mean_freq", feature_names)
+feature_names <- gsub("maxInds", "max_inds", feature_names)
+feature_names <- gsub("_\\-", "_", feature_names)
+feature_names <- gsub("\\-", "", feature_names)
+feature_names <- gsub("\\,", "_", feature_names)
+feature_names <- gsub("\\(\\)", "_", feature_names)
 feature_names <- gsub("[\\(\\)]", "", feature_names)
-
-# replace dashes and commas in names with underscore
-feature_names <- gsub("[\\-\\,]","_", feature_names)
-
-# I don't like it, but it seems they want variables in lower case
+feature_names <- gsub("_$", "", feature_names) 
+feature_names <- gsub("__", "_", feature_names)
 feature_names <- tolower(feature_names)
 
 # get the column names containing "mean" or "std".
@@ -37,12 +53,16 @@ x_train_data <- read.table("data/UCI HAR Dataset/train/X_train.txt")
 # read X Test data into table
 x_test_data <- read.table("data/UCI HAR Dataset/test/X_test.txt")
 
+##########################
 ###### SATISFIES #4 ######
+##########################
 # apply column names to x_train_data and x_test_data
 names(x_train_data) <- feature_names
 names(x_test_data) <- feature_names
 
+##########################
 ###### SATISFIES #2 ######
+##########################
 # filter for only needed columns (remove all but mean and std)
 # resorting to old fashioned techniques to avoid dplyr frustations
 x_train_data <- x_train_data[,filtered_names]
@@ -71,20 +91,26 @@ train_df <- cbind(train_subject_id, train_df)
 test_df <- cbind(y_test_data, x_test_data)
 test_df <- cbind(test_subject_id, test_df)
 
+##########################
 ###### SATISFIES #1 ######
+##########################
 # Merge the two dataframes
 mydf <- rbind(train_df, test_df)
 
 # sort it to make it pretty
 mydf <- arrange(mydf, subject_id, activity)
 
+##########################
 ###### SATISFIES #3 ######
+##########################
 # Create factor for activities
 activities <- read.table("data/UCI HAR Dataset/activity_labels.txt")
 activity_factor <- factor(activities$V2, levels = activities$V2)
 mydf <- mutate(mydf, activity = activity_factor[activity])
 
+##########################
 ###### SATISFIES #5 ######
+##########################
 # create new dataframe of same data grouped by subject_id and activity
 # new dataframe contains summary of all means by above groups
 newdf <- group_by(mydf, subject_id, activity)
